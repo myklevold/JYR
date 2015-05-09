@@ -1,4 +1,4 @@
-package yr;
+package com.katrinemyklevold.yr;
 
 import java.io.*;
 import java.net.*;
@@ -14,23 +14,42 @@ import org.xml.sax.*;
 public class ForecastFetcher {
 
 	public Forecast fetchForecast(String stringUrl) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+		Document doc = getUrlAsDocument(stringUrl);
+
+		Forecast forecast = new Forecast();
+
+		handleCredit(doc, forecast);
+		handleLocation(doc, forecast);
+		handleTimes(doc, forecast);
+
+		return forecast;
+	}
+
+	private Document getUrlAsDocument(String stringUrl)
+			throws MalformedURLException, IOException,
+			ParserConfigurationException, SAXException {
 		URL url = new URL(stringUrl);
 		InputStream stream = url.openStream();
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(stream);
-
-		Forecast forecast = new Forecast();
-
+		return doc;
+	}
+	
+	private void handleCredit(Document doc, Forecast forecast) throws XPathExpressionException {
 		//jumps into the credit tag in the xml to search for link
 		//we do this because other tags may also be named link and we want the one in the credit tag
+		
 		Node credit = getNodeByXpath("/weatherdata/credit", doc);
 		Node creditText = getNodeByXpath("link/@text", credit);
 		Node creditLink = getNodeByXpath("link/@url", credit);
 
 		forecast.setCredit(creditText.getTextContent());
 		forecast.setCreditLink(creditLink.getTextContent());
-
+	}
+	
+	private void handleLocation(Document doc, Forecast forecast)
+			throws XPathExpressionException {
 		//jumps into the location tag in the xml to search for name, country and timezoneid 
 		//we do this because other tags may also be named name, country etc and we want the ones in the location tag
 		Node location = getNodeByXpath("/weatherdata/location", doc); 
@@ -43,7 +62,10 @@ public class ForecastFetcher {
 		forecast.setCountry(country.getTextContent());
 		forecast.setTimeZone(timeZoneId.getTextContent());
 		forecast.setAltitude(altitude.getTextContent());
+	}
 
+	private void handleTimes(Document doc, Forecast forecast)
+			throws XPathExpressionException {
 		//jumps into the tabular tag in the xml to search for times 
 		//we do this because other tags may also be named times etc and we want the ones in the tabular tag
 		Node tabular = getNodeByXpath("/weatherdata/forecast/tabular", doc);
@@ -51,6 +73,12 @@ public class ForecastFetcher {
 
 		List<Time> listOfTimes = new ArrayList<>();
 
+		setWeatherForEachTime(times, listOfTimes);
+		forecast.setListOfTimes(listOfTimes);
+	}
+
+	private void setWeatherForEachTime(NodeList times, List<Time> listOfTimes)
+			throws XPathExpressionException {
 		for(int i = 0; i < times.getLength(); ++i) {
 			Time currentTime = new Time();
 			Node currentTimeNode = times.item(i);
@@ -78,11 +106,7 @@ public class ForecastFetcher {
 
 			listOfTimes.add(currentTime);
 		}
-		forecast.setListOfTimes(listOfTimes);
-
-		return forecast;
 	}
-
 
 	private static Node getNodeByXpath(String xpath, Node document) throws XPathExpressionException {
 		XPath xPath = XPathFactory.newInstance().newXPath();

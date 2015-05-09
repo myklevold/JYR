@@ -1,4 +1,4 @@
-package yr;
+package com.katrinemyklevold.yr;
 
 public class Time {
 	private String from;

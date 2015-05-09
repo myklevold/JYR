@@ -1,4 +1,4 @@
-package gui;
+package com.katrinemyklevold.gui;
 
 import javax.swing.*;
 import java.awt.*;

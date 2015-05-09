@@ -1,4 +1,4 @@
-package utils;
+package com.katrinemyklevold.yr;
 
 public class YrUrlBuilder {
     private YrUrlBuilder() {}

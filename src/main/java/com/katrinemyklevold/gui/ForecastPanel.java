@@ -1,6 +1,6 @@
-package gui;
+package com.katrinemyklevold.gui;
 
-import yr.Forecast;
+import com.katrinemyklevold.yr.Forecast;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

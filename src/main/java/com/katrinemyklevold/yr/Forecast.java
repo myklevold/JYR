@@ -1,4 +1,4 @@
-package yr;
+package com.katrinemyklevold.yr;
 
 import java.util.List;
 

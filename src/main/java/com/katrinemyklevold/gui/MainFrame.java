@@ -1,12 +1,10 @@
-package gui;
+package com.katrinemyklevold.gui;
 
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import utils.YrUrlBuilder;
-import yr.Forecast;
-import yr.ForecastFetcher;
+import com.katrinemyklevold.yr.*;
 import org.xml.sax.SAXException;
 
 import java.awt.event.*;
